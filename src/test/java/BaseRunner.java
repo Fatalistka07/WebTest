@@ -6,13 +6,10 @@ import java.util.concurrent.TimeUnit;
 
 public class BaseRunner {
     WebDriver driver;
-    private String browserName = System.getProperty("browser");
-    private String baseUrl;
 
     @Before
     public void setUp(){
         driver = getDriver();
-        baseUrl = "https://www.tinkoff.ru/mobile-operator/tariffs/";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
@@ -22,13 +19,7 @@ public class BaseRunner {
     }
 
     private WebDriver getDriver() {
-        try {
-            BrowsersFactory.valueOf(System.getProperty("browser"));
-        } catch (NullPointerException | IllegalArgumentException e) {
-            browserName = "chrome";
-            System.setProperty("browser", browserName);
-        }
-        return BrowsersFactory.valueOf(browserName).create();
+        return BrowsersFactory.valueOf("chrome").create();
     }
 
 }
