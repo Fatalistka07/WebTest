@@ -20,12 +20,15 @@ class TinkoffSimFormTester {
         WebElement getElement() {
             return driver.findElement(By.xpath(elementXPath));
         }
+
+        void click() {
+            getElement().click();
+        }
     }
 
-    public class CheckBox extends ElementWrapper {
-
-        CheckBox(String checkBoxText) {
-            super("//div[@class='CheckboxWithDescription__checkbox_2E0r_' and label[contains(text(),'" + checkBoxText + "')]]");
+    public abstract class CheckBox extends ElementWrapper {
+        CheckBox(String xPath) {
+            super(xPath);
         }
 
         boolean isChecked() {
@@ -47,12 +50,28 @@ class TinkoffSimFormTester {
         }
     }
 
+    public class CheckBoxWithHelp extends CheckBox {
+        CheckBoxWithHelp(String checkBoxText) {
+            super("//div[@class='CheckboxWithDescription__checkbox_2E0r_' and label[contains(text(),'" + checkBoxText + "')]]");
+        }
+    }
+
+    public class CheckBoxAgreement extends CheckBox {
+        CheckBoxAgreement() {
+            super("//div[contains(@class,'styles__agreementCheckboxTitle_2NQKP')]/div/div");
+        }
+
+        String getErrorText() {
+            return getElement().findElement(By.xpath("../div[@class='ui-form-field-error-message ui-form-field-error-message_ui-form']")).getText();
+        }
+    }
+
     public class TextInput extends ElementWrapper {
         TextInput(String inputName) {
             super("//input[@name='" + inputName + "']");
         }
 
-        public String getText() {
+        String getText() {
             return getElement().getText();
         }
 
@@ -63,15 +82,16 @@ class TinkoffSimFormTester {
         public void clear() {
             getElement().clear();
         }
+
+        String getErrorText() {
+            return getElement().findElement(By.xpath("../../../../../descendant::div[@class='ui-form-field-error-message ui-form-field-error-message_ui-form']")).getText();
+        }
+
     }
 
     class Button extends ElementWrapper {
         Button(String buttonText) {
             super("//button[span[descendant::text()='" + buttonText + "']]");
-        }
-
-        void click() {
-            getElement().click();
         }
 
         boolean isEnabled() {
@@ -107,15 +127,23 @@ class TinkoffSimFormTester {
     }
 
     CheckBox getMessengersCB() {
-        return new CheckBox("Мессенджеры");
+        return new CheckBoxWithHelp("Мессенджеры");
     }
 
     CheckBox getSocialNetsCB() {
-        return new CheckBox("Социальные сети");
+        return new CheckBoxWithHelp("Социальные сети");
+    }
+
+    CheckBoxAgreement getAgreementCB() {
+        return new CheckBoxAgreement();
     }
 
     Button getSimRequestBT() {
         return new Button("Заказать сим-карту");
+    }
+
+    Button getSubmitBT() {
+        return new Button("Оставить заявку");
     }
 
     Button getDeliverRequestBT() {
